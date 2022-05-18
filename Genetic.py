@@ -5,7 +5,6 @@ import pandas as pd
 import random
 import time
 from matplotlib import pyplot as plt
-import Const
 
 
 def random_swap_in(l) -> list:

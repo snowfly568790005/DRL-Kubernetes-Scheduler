@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-import json
-import os, platform, subprocess, re
-import ast
-import time
-import namespace as namespace
-from kubernetes.client import ApiClient, CustomObjectsApi
 
-import time
+from kubernetes.client import CustomObjectsApi
+
 from Genetic import *
 from kubernetes import client, config, watch
 
@@ -44,19 +39,18 @@ def used_resources():
                 cpupods[i['metadata']['name']].append(i['containers'][0]['usage']['cpu'])
                 mempod[i['metadata']['name']].append(i['containers'][0]['usage']['memory'])
 
-        time.sleep(120) # To get different mesures after 1 min window
+        time.sleep(35)  # To get different mesures after 10s  window
     return cpunode, memnode, cpupods, mempod
 
 
 def getpodsnb():
     w = watch.Watch()
     S = 0
-    for _ in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
-        S = S + 1
+    for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
+        if event['object'].status.phase == "Running":
+            S = S + 1
     return S
 
-
-####### for tweets we need to change from timer to number of tweets that has be scrapped
 
 def exec_time():
     """
@@ -68,11 +62,28 @@ def exec_time():
     info = {}
     while nb != len(info):
         for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
-            if (event['object'].status.container_statuses[0].restart_count != 0) and (
-                    event['object'].metadata.name not in info):
+            if (event['object'].status.container_statuses is not None and (
+                    event['object'].status.container_statuses[0].restart_count != 0)
+                    and (event['object'].metadata.name not in info)):
                 info[event['object'].metadata.name] = {
                     'started_at': event['object'].status.container_statuses[0].last_state.terminated.started_at,
                     'finished_at': event['object'].status.container_statuses[0].last_state.terminated.finished_at
                 }
-        time.sleep(120)
-        print(info)
+        time.sleep(10)
+    return info
+
+
+def results():
+    print('current running pods ', getpodsnb())
+    cpunode, memnode, cpupods, mempod = used_resources()
+    print('CPU and Memory used in NODES')
+    print(cpunode)
+    print(memnode)
+    print('CPU and Memory used in PODS')
+    print(cpupods)
+    print(mempod)
+    print('Total execution time ')
+    print(exec_time())
+
+
+results()
