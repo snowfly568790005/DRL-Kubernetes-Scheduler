@@ -66,6 +66,7 @@ def exec_time():
                     event['object'].status.container_statuses[0].restart_count != 0)
                     and (event['object'].metadata.name not in info)):
                 info[event['object'].metadata.name] = {
+                    'Scheduler': event['object'].spec.scheduler_name,
                     'started_at': event['object'].status.container_statuses[0].last_state.terminated.started_at,
                     'finished_at': event['object'].status.container_statuses[0].last_state.terminated.finished_at
                 }
