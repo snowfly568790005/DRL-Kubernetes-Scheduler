@@ -1,12 +1,11 @@
 #!/usr/bin/env python
+from datetime import time
 
 from kubernetes.client import CustomObjectsApi
 
-from Genetic import *
 from kubernetes import client, config, watch
 
 config.load_kube_config()  ## From control panel
-# config.load_incluster_config()  ### From cluster
 
 v1 = client.CoreV1Api()
 
@@ -85,6 +84,3 @@ def results():
     print(mempod)
     print('Total execution time ')
     print(exec_time())
-
-
-results()
