@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: calcul600
+  name: calcul600
+spec:
+  containers:
+  - image: moenes/calcul600:latest
+    name: calcul600
+  schedulerName: genetic
+  val: 1021690

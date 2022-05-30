@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: calcul300
+  labels:
+    app: calcul300
+spec:
+  schedulerName: kube-scheduler
+  val: 890000
+  containers:
+  - name: calcul300
+    image: moenes/calcul300:latest
