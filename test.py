@@ -3,6 +3,7 @@ import time
 import yaml
 import subprocess
 
+
 def change_sched(name):
     tasks = ['calcul300.yaml', 'calcul400.yaml', 'calcul500.yaml', 'calcul600.yaml']
     for i in tasks:
@@ -21,7 +22,7 @@ def apply_changes():
     bashCommand = "kubectl delete -f tasks/."
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
-    time.sleep(40) ## wating for tasks to be deleted
+    time.sleep(40)  ## wating for tasks to be deleted
     bashCommand = "kubectl apply -f tasks/. --validate=false"
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
@@ -32,5 +33,11 @@ def update(name):
     apply_changes()
 
 
-update("genetic")
+def test():
+    d = {"k": 10, "s": 5}
+    m = {"d": 7, "a": 12}
+    for i in zip(d, m):
+        pass
 
+
+test()

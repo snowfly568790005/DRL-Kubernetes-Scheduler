@@ -16,9 +16,9 @@ def used_resources():
     """
     cust = CustomObjectsApi()
     nodes = cust.list_cluster_custom_object('metrics.k8s.io', 'v1beta1', 'nodes')
-    pods = cust.list_cluster_custom_object('metrics.k8s.io', 'v1beta1', 'namespaces/default/pods')
-    cpupods = {}
-    mempod = {}
+    # pods = cust.list_cluster_custom_object('metrics.k8s.io', 'v1beta1', 'namespaces/default/pods')
+    # cpupods = {}
+    # mempod = {}
     cpunode = {}
     memnode = {}
     for t in range(3):
@@ -30,21 +30,21 @@ def used_resources():
                 cpunode[i['metadata']['name']].append(int(i['usage']['cpu'][:len(i['usage']['cpu']) - 1]))
                 memnode[i['metadata']['name']].append(int(i['usage']['memory'][:len(i['usage']['memory']) - 2]))
 
-        for i in pods['items']:
-            if i['metadata']['name'] not in cpupods:
-                cpupods[i['metadata']['name']] = [
-                    int(i['containers'][0]['usage']['cpu'][:len(i['containers'][0]['usage']['cpu']) - 1])]
-                mempod[i['metadata']['name']] = [
-                    int(i['containers'][0]['usage']['memory'][:len(i['containers'][0]['usage']['memory']) - 2])]
-            else:
-                cpupods[i['metadata']['name']].append(
-                    int(i['containers'][0]['usage']['cpu'][:len(i['containers'][0]['usage']['cpu']) - 1]))
-                mempod[i['metadata']['name']].append(
-                    int(i['containers'][0]['usage']['memory'][:len(i['containers'][0]['usage']['memory']) - 2]))
+        # for i in pods['items']:
+        #     if i['metadata']['name'] not in cpupods:
+        #         cpupods[i['metadata']['name']] = [
+        #             int(i['containers'][0]['usage']['cpu'][:len(i['containers'][0]['usage']['cpu']) - 1])]
+        #         mempod[i['metadata']['name']] = [
+        #             int(i['containers'][0]['usage']['memory'][:len(i['containers'][0]['usage']['memory']) - 2])]
+        #     else:
+        #         cpupods[i['metadata']['name']].append(
+        #             int(i['containers'][0]['usage']['cpu'][:len(i['containers'][0]['usage']['cpu']) - 1]))
+        #         mempod[i['metadata']['name']].append(
+        #             int(i['containers'][0]['usage']['memory'][:len(i['containers'][0]['usage']['memory']) - 2]))
 
         # time.sleep(35)  # To get different mesures after 10s  window
 
-    return final(cpunode), final(memnode), final(cpupods), final(mempod)
+    return final(cpunode), final(memnode)  # , final(cpupods), final(mempod)
 
 
 def getpodsnb():
@@ -88,7 +88,7 @@ def final(dic):
 
 def printresults():
     print('current running pods ', getpodsnb())
-    cpunode, memnode, cpupods, mempod = used_resources()
+    cpunode, memnode=  used_resources()
     print('CPU and Memory used in NODES')
     print(cpunode)
     print(memnode)
@@ -97,9 +97,18 @@ def printresults():
 
 
 def resources():
-    cpunode, memnode, cpupods, mempod = used_resources()
-    ## transfort to state ?
+    cpunode, memnode = used_resources()
+    return cpunode, memnode, exec_time()
 
-    return cpunode,memnode, exec_time()
 
-print(resources())
+def metric():
+    cpunode, memnode = used_resources()
+    S = 0
+    for i in cpunode:
+        Avg = (cpunode[i] + memnode[i]) / 2
+        S = ((Avg - cpunode[i]) ** 2) / 2 + ((Avg - memnode[i]) ** 2) / 2
+    return S / len(cpunode) , exec_time()
+
+
+# print(resources())
+print(metric())

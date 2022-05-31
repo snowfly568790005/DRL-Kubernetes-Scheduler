@@ -5,6 +5,7 @@ import numpy as np
 import gym
 from Kubernetes_Helper import *
 from KubeResources import *
+from GeneticSched import *
 
 
 ## letss start with the tasks cpus's as the state
@@ -13,17 +14,17 @@ from KubeResources import *
 class CloudEnv(gym.Env):
     def __init__(self, steps):
         """
-        Action space : discrite : Genetic, Kube default scheuduler
-        Observation space / same state space : we can maybz start with the nb of tasks and their cpu usage and the
-        availabe nodes and maybeee later we can alter the nodes resources
+        Action space : discrete : Genetic, Kube default scheduler
+        Observation space / same state space : we can maybe start with the nb of tasks and their cpu usage and the
+        available nodes and maybeee later we can alter the nodes resources
 
         """
         super(CloudEnv, self).__init__()
         self.nodes = nodes_available()
         self.VMSnumber = len(self.nodes)
-        self.tasks = tasks()
         self.steps = steps
         self.currentsteps = 0
+        self.lastmetrics = None
 
     def step(self, action):
         """
@@ -38,17 +39,12 @@ class CloudEnv(gym.Env):
             algo = 'genetic'
         elif action == 1:
             algo = 'defalu'
-        ## this is when I reconfigure the pods to change their scduler name
         reconfigure(algo)
-        ## if genetic is the algo we call the genetic funtion
-        ## we do not need to this for the others for now
-        time.sleep(10)  ## modify later
+        time.sleep(40)
+        if algo == 'genetic':
+            schedule()
         ## get mesurmùents  stock them inside the reaply memory ( in the training loop )
-        # pass thiss to the reward
-
-        cpunode, memnode, exec_tuime = resources()
-        state = {'cpu': cpunode, 'memory': memnode}
-        ## call memory replay and annd tihds
+        state = get_state()
         reward = self.reward()
         done = self.termination()
         return action, state, reward, done
@@ -59,6 +55,7 @@ class CloudEnv(gym.Env):
         reset the tasks, Deleting all the envi, looking again for availble nodes,
         :return:
         """
+        ## reseting tasks with random CPU between the values and the scheduler name as waiting
         pass
 
     def termination(self):
@@ -80,32 +77,28 @@ class CloudEnv(gym.Env):
         LATTEEEEER check the condiciton of nodes if one pod got effectied he gets --
         :return:
         """
-        if self.currentsteps == 0:
+        if self.currentsteps == 0:  # cant compare til we have two time steps
             reward = 1
+            self.lastmetrics = [metric()]
         else:
-            cpunode, memnode, exec_tuime = resources()
-            ### compare metrics
+            imbalence_deg, exec_time = metric()
+            if imbalence_deg < self.lastmetrics[0]:
+                if exec_time < self.lastmetrics[1]:
+                    reward = 5
+                else:
+                    reward = 3
+            else:
+                if exec_time < self.lastmetrics[1]:
+                    reward = 3
+                else:
+                    reward = -1
+            self.lastmetrics = metric()
         return reward
 
 
-class ReplayMemory:
-    def __init__(self, capacity):
-        self.memory = collections.deque(maxlen=capacity)
-
-    def __len__(self):
-        return len(self.memory)
-
-    def append(self, experience):
-        self.memory.append(experience)
-
-    def tocsv(self):
-        pass
-
-    def sample(self, batch_size):
-        indices = np.random.choice(len(self.memory), batch_size,
-                                   replace=False)
-        states, actions, rewards, dones, next_states = zip([self.memory[idx] for idx in indices])
-
-        ## will see with the return, depends on our state
-        return np.array(states), np.array(actions), np.array(rewards, dtype=np.float32), \
-               np.array(dones, dtype=np.uint8), np.array(next_states)
+# def metrics(cpu, mem):
+#     ## compute the avg cpu util to calculte the avg cpu util
+#     ## no neeed to compute the avg, it's always done
+#     for i in zip:
+#         pass
+#     avg = 0

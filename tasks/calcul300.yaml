@@ -8,5 +8,5 @@ spec:
   containers:
   - image: moenes/calcul300:latest
     name: calcul300
-  schedulerName: genetic
+  schedulerName: waiting
   val: 890000
