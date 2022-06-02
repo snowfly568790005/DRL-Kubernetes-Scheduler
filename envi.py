@@ -1,7 +1,3 @@
-import collections
-import time
-import numpy as np
-
 import gym
 from Kubernetes_Helper import *
 from KubeResources import *
@@ -12,7 +8,7 @@ from GeneticSched import *
 ## selection will be basd on
 
 class CloudEnv(gym.Env):
-    def __init__(self, steps):
+    def __init__(self):
         """
         Action space : discrete : Genetic, Kube default scheduler
         Observation space / same state space : we can maybe start with the nb of tasks and their cpu usage and the
@@ -20,11 +16,16 @@ class CloudEnv(gym.Env):
 
         """
         super(CloudEnv, self).__init__()
-        self.nodes = nodes_available()
-        self.VMSnumber = len(self.nodes)
-        self.steps = steps
+        # self.nodes = nodes_available()
         self.currentsteps = 0
         self.lastmetrics = None
+        self.algos = {0: 'genetic', 1: 'default-scheduler'}
+
+    def getmetrics(self):
+        if self.currentsteps == 0:
+            return None
+        else:
+            return metric()
 
     def step(self, action):
         """
@@ -34,20 +35,15 @@ class CloudEnv(gym.Env):
         :param action:
         :return:
         """
-        self.currentsteps = self.currentsteps + 1
-        if action == 0:
-            algo = 'genetic'
-        elif action == 1:
-            algo = 'defalu'
-        reconfigure(algo)
+        reconfigure(self.algos[action])
         time.sleep(40)
-        if algo == 'genetic':
+        if self.algos[action] == 'genetic':
             schedule()
-        ## get mesurmùents  stock them inside the reaply memory ( in the training loop )
-        state = get_state()
-        reward = self.reward()
+        next_state, metrics = resources()
+        reward = self.reward(metrics)
         done = self.termination()
-        return action, state, reward, done
+        self.currentsteps = self.currentsteps + 1
+        return action, next_state, reward, done
 
     def reset(self):
         """
@@ -56,20 +52,17 @@ class CloudEnv(gym.Env):
         :return:
         """
         ## reseting tasks with random CPU between the values and the scheduler name as waiting
-        pass
+        return reset()
 
     def termination(self):
         """
         check maybe the number of steps of our agent if we attented that time step we stop
         :return:
         """
-        done = False
-        if self.steps == self.currentsteps:
-            done = True
+        ## we change this to kube checks if all tasks are done in case of evicted tasks
+        return True
 
-        return done
-
-    def reward(self):
+    def reward(self,metrics):
         """
         what is our reward function.. this a prob for now
         maybe try one time get the actual mesruements of that cpu of the node
@@ -79,26 +72,20 @@ class CloudEnv(gym.Env):
         """
         if self.currentsteps == 0:  # cant compare til we have two time steps
             reward = 1
-            self.lastmetrics = [metric()]
+            self.lastmetrics = metrics
         else:
-            imbalence_deg, exec_time = metric()
-            if imbalence_deg < self.lastmetrics[0]:
-                if exec_time < self.lastmetrics[1]:
+            print('self.lastmetrics[0]', self.lastmetrics[0])
+            print('self.lastmetrics[1]', self.lastmetrics[1])
+            exec_time, imbalence_deg = metrics[0], metrics[1]
+            if imbalence_deg < self.lastmetrics[1]:
+                if exec_time < self.lastmetrics[0]:
                     reward = 5
                 else:
                     reward = 3
             else:
-                if exec_time < self.lastmetrics[1]:
+                if exec_time < self.lastmetrics[0]:
                     reward = 3
                 else:
                     reward = -1
-            self.lastmetrics = metric()
+            self.lastmetrics = metrics
         return reward
-
-
-# def metrics(cpu, mem):
-#     ## compute the avg cpu util to calculte the avg cpu util
-#     ## no neeed to compute the avg, it's always done
-#     for i in zip:
-#         pass
-#     avg = 0

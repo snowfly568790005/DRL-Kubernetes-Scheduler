@@ -1,4 +1,6 @@
+import datetime
 import time
+import random
 
 import yaml
 import subprocess
@@ -34,10 +36,12 @@ def update(name):
 
 
 def test():
-    d = {"k": 10, "s": 5}
-    m = {"d": 7, "a": 12}
-    for i in zip(d, m):
-        pass
+    print(random.random())
 
+# Terminating
 
-test()
+dic = {'calcul300': datetime.timedelta(seconds=300), 'calcul400': datetime.timedelta(seconds=400), 'calcul500': datetime.timedelta(seconds=500), 'calcul600': datetime.timedelta(seconds=600)}
+S = 0
+for i in dic:
+    S = S + (dic[i].total_seconds())
+print(S / len(dic))

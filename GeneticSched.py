@@ -1,18 +1,11 @@
-#!/usr/bin/env python
-import json
-import os, platform, subprocess, re
-import ast
-import time
-import namespace as namespace
-from kubernetes.client import ApiClient, CustomObjectsApi
 
-import time
+import ast
+
+
 from Genetic import *
 from kubernetes import client, config, watch
 
 config.load_kube_config()  ## hedhi tekhdm ki nlansi mn hnee
-# config.load_incluster_config()  ### hedhii for kuber cluster
-
 v1 = client.CoreV1Api()
 
 scheduler_name = "genetic"
@@ -45,7 +38,6 @@ def scheduler(name, node, namespace="default"):
     meta.name = name
     body = client.V1Binding(target=target)
     body.metadata = meta
-    print(name, 'scheduled by', node)
     return v1.create_namespaced_binding(namespace, body, _preload_content=False)
 
 
@@ -58,13 +50,11 @@ def genetic(nodes_dict, taskdict):
     """
     tasks = [taskdict[i][-1] for i in taskdict]
     processors = [nodes_dict[i][-1] for i in nodes_dict]
-    print(processors)
     time_matrix = [[round(t / p, 3) for p in processors] for t in tasks]
     carac = Setup(len(taskdict), len(nodes_dict), time_matrix)
     gts = GeneticTaskScheduler()
     gts.schedule(carac)
     best = gts.best_of_all
-    print(best)
     return best
 
 

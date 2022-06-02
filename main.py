@@ -1,112 +1,50 @@
-#!/usr/bin/env python
-import json
-import os, platform, subprocess, re
-import ast
-import time
-import namespace as namespace
-from kubernetes.client import ApiClient, CustomObjectsApi
+import torch
 
-import time
-from Genetic import *
-from kubernetes import client, config, watch
+from Agent import *
+from envi import *
 
-config.load_kube_config()  ## hedhi tekhdm ki nlansi mn hnee
-# config.load_incluster_config()  ### hedhii for kuber cluster
+## epiode is not the number of steps withing an agent
+##
 
-v1 = client.CoreV1Api()
-
-scheduler_name = "genetic"
-
-
-def nodes_available():
-    nodes_dict = {}
-    counter = 0
-    for n in v1.list_node().items:
-        for status in n.status.conditions:
-            if status.status == "True" and status.type == "Ready":
-                nodes_dict[counter] = [n.metadata.name, int(n.status.allocatable['cpu'])]
-                counter = counter + 1
-    return nodes_dict
+## get all states,
+env = CloudEnv()
+_ = env.reset()
+algos = {0: 'genetic', 1: 'default-scheduler', 2: 'round-robin'}
+print(get_tasks())
+state_size = len(get_tasks())
+action_size = len(algos)
+print('state size', state_size)
+print('action_size', action_size)
+agent = Agent(state_size, action_size, 10)
 
 
-def scheduler(name, node, namespace="default"):
-    """
-    The affecting  function after Scheduling
-    :param name:
-    :param node:
-    :param namespace:
-    :return:
-    """
-    target = client.V1ObjectReference()
-    target.kind = "Node"
-    target.apiVersion = "v1"
-    target.name = node
-    meta = client.V1ObjectMeta()
-    meta.name = name
-    body = client.V1Binding(target=target)
-    body.metadata = meta
-    print(name, 'scheduled by', node)
-    return v1.create_namespaced_binding(namespace, body, _preload_content=False)
 
+def dqn(n_eps=1000, eps_start=0.1, eps_end=0.01, eps_decay=0.995):
+    scores = []
+    eps = eps_start
+    for i in range(1, n_eps + 1):
+        state = env.reset()  ## this is where we are going to reset the env with new tasks and random cpu in range
+        print(f'done resetting for {i} th time')
+        action = agent.act(state, eps)
+        print(f'agent gave action {algos[action]} and action is {action}')
+        ## matp this to the dict
+        _, next_state, reward, done = env.step(action)
+        print(f'got {reward}')
+        agent.step(state, action, reward, next_state, done)
+        scores.append(reward)
+        eps = max(eps_end, eps_decay * eps)
+        print(f'{i} th step is done')
+        print('////////////////////////////////////////')
+    ## we save the model here
+    torch.save(agent.qnetwork_local.state_dict(), 'checkpt_Gen_Default.pth')
+    return scores
 
-def genetic(nodes_dict, taskdict):
-    """
-    Genetic Scheduler
-    :param nodes_dict:
-    :param taskdict:
-    :return:
-    """
-    tasks = [taskdict[i][-1] for i in taskdict]
-    processors = [nodes_dict[i][-1] for i in nodes_dict]
-    print(processors)
-    time_matrix = [[round(t / p, 3) for p in processors] for t in tasks]
-    carac = Setup(len(taskdict), len(nodes_dict), time_matrix)
-    gts = GeneticTaskScheduler()
-    gts.schedule(carac)
-    best = gts.best_of_all
-    print(best)
-    return best
+scores = dqn()
+print(scores)
 
-
-def match(i, sched, nodes_dict):
-    """
-    Matches the pod index to it's affected node name to schdule
-    :param i:
-    :param sched:
-    :param nodes_dict:
-    :return:
-    """
-    return nodes_dict[sched[i]]
-
-
-def tasks():
-    """
-    Getting the tasks on pending waiting for Genetic scheduler
-    :return:
-    """
-    w = watch.Watch()
-    idTask = 0
-    taskdict = {}
-    for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
-        if event['object'].status.phase == "Pending" and event['object'].status.conditions is None and \
-                event['object'].spec.scheduler_name == scheduler_name:
-            taskdict[idTask] = [event['object'].metadata.name, ast.literal_eval(
-                event['object'].metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'])['spec'][
-                'val']]
-            idTask += 1
-    return taskdict
-
-
-def main():
-    print(v1.list_namespaced_pod)
-    print('Nodes :', nodes_available())
-    taskdict = tasks()
-    nodes_dict = nodes_available()
-    schduled = genetic(nodes_dict, taskdict)
-    print(taskdict)
-    for i in taskdict:
-        scheduler(taskdict[i][0], match(i, schduled, nodes_dict)[0])
-
-
-if __name__ == '__main__':
-    main()
+fig = plt.figure()
+ax = fig.add_subplot(111)
+plt.plot(np.arange(len(scores)-1), scores[1::]) # ignore the first score
+plt.ylabel('Score')
+plt.xlabel('Episode #')
+plt.show()

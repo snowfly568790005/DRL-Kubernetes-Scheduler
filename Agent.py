@@ -27,13 +27,10 @@ class Agent:
         self.optimizer = optim.Adam(self.qnetwork_local.parameters(), lr=LR)
 
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
-        self.step = 0
 
     def step(self, state, action, reward, next_state, done):
         self.memory.add(state, action, reward, next_state, done)
-        self.step = (self.step + 1) % UPDATE_EVERY
-        if self.step == 0:
-            if len(self.memory) > BATCH_SIZE:
+        if len(self.memory) > BATCH_SIZE:
                 experience = self.memory.sample()
                 self.learn(experience, GAMMA)
 
@@ -76,4 +73,4 @@ class Agent:
         if random.random() > eps:
             return np.argmax(actions.cpu().data.numpy())
         else:
-            random.choice(np.arange(self.action_size))
+            return random.choice(np.arange(self.action_size))

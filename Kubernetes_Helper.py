@@ -1,10 +1,16 @@
-#!/usr/bin/env python
+from Kubernetes_Helper import *
+from KubeResources import *
+from kubernetes import client, config, watch
 
 import ast
+import time
+import random
+
+import numpy as np
 import yaml
 import subprocess
 
-from kubernetes import client, config, watch
+
 
 config.load_kube_config()
 v1 = client.CoreV1Api()
@@ -37,7 +43,6 @@ def scheduler(name, node, namespace="default"):
     meta.name = name
     body = client.V1Binding(target=target)
     body.metadata = meta
-    print(name, 'scheduled by', node)
     return v1.create_namespaced_binding(namespace, body, _preload_content=False)
 
 
@@ -52,7 +57,7 @@ def match(i, sched, nodes_dict):
     return nodes_dict[sched[i]]
 
 
-def tasks():
+def get_tasks():
     """
     Getting the tasks on pending waiting for scheduling
     :return:
@@ -70,38 +75,50 @@ def tasks():
     return taskdict
 
 
-def change_sched(name):
+def change_info(name):
     tasks = ['calcul300.yaml', 'calcul400.yaml', 'calcul500.yaml', 'calcul600.yaml']
     for i in tasks:
         path = 'tasks/' + i
         with open(path) as file:
             file = yaml.load(file, Loader=yaml.FullLoader)
             file['spec']['schedulerName'] = name
-        print(file)
+            if random.random() > 0.5:
+                file['spec']['val'] = file['spec']['val'] + 200
+            else:
+                file['spec']['val'] = file['spec']['val'] - 200
 
         with open(path, 'w') as fil:
-            print(file)
             documents = yaml.dump(file, fil)
+
+
+def reset():
+    bashCommand = "kubectl delete -f tasks/."
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = process.communicate()
+    time.sleep(30)
+    change_info('waiting')
+    bashCommand = "kubectl apply -f tasks/. --validate=false"
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = process.communicate()
+    time.sleep(10)
+    return np.array(getlist(get_tasks()))
 
 
 def apply_changes():
     bashCommand = "kubectl delete -f tasks/."
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
-    print(result)
     bashCommand = "kubectl apply -f tasks/. --validate=false"
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
-    print(result)
-
 
 def reconfigure(name):
-    change_sched(name)
+    change_info(name)
     apply_changes()
 
 
-def get_state():
-    return tasks()
-
-
-print(get_state())
+def getlist(dic):
+    L = []
+    for i in dic:
+        L.append(dic[i][-1])
+    return L

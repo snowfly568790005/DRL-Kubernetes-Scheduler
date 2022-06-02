@@ -88,7 +88,7 @@ def final(dic):
 
 def printresults():
     print('current running pods ', getpodsnb())
-    cpunode, memnode=  used_resources()
+    cpunode, memnode = used_resources()
     print('CPU and Memory used in NODES')
     print(cpunode)
     print(memnode)
@@ -98,17 +98,19 @@ def printresults():
 
 def resources():
     cpunode, memnode = used_resources()
-    return cpunode, memnode, exec_time()
+    exectime = avg_time(exec_time())
+    imbal_deg = metric(cpunode, memnode)
+    return [cpunode, memnode], [exectime,imbal_deg]
 
+def avg_time(dic):
+    S = 0
+    for i in dic:
+        S = S + (dic[i].total_seconds())
+    return S
 
-def metric():
-    cpunode, memnode = used_resources()
+def metric(cpunode, memnode):
     S = 0
     for i in cpunode:
         Avg = (cpunode[i] + memnode[i]) / 2
         S = ((Avg - cpunode[i]) ** 2) / 2 + ((Avg - memnode[i]) ** 2) / 2
-    return S / len(cpunode) , exec_time()
-
-
-# print(resources())
-print(metric())
+    return S/len(cpunode)

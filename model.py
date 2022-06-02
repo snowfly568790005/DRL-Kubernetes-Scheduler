@@ -1,3 +1,6 @@
+import random
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,6 +15,8 @@ class QNetwork(nn.Module):
         self.fc3 = nn.Linear(fc2_units, action_size)
 
     def forward(self, state):
+        #state = F.normalize(torch.FloatTensor(state), dim=0)
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         return self.fc3(x)
+
