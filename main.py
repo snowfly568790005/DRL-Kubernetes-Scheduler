@@ -1,7 +1,3 @@
-import time
-
-import torch
-import os
 from Agent import *
 from envi import *
 
@@ -33,11 +29,12 @@ def dqn(n_eps=74, steps=10, eps_start=0.4, eps_end=0.01, eps_decay=0.995):
             score = score + reward
             if done:
                 break
+            print(
+                f'{i} th step is done with state {state} and next state {next_state} and total reward {score} with '
+                f'action {algos[action]}  with done {done} in {step} steps')
+            print('////////////////////////////////////////')
         eps = max(eps_end, eps_decay * eps)
         scores.append(score)
-        print(f'{i} th step is done with state {state} and next state {next_state} and total reward {score} with action'
-              f' {algos[action]}  with done {done} in {step} steps')
-        print('////////////////////////////////////////')
         name = f'checkpt_gen_rr2_{i}.pth'
         torch.save(agent.qnetwork_local.state_dict(), name)
         if os.path.exists(f'checkpt_gen_rr2_{i - 1}.pth'):
@@ -54,5 +51,3 @@ plt.plot(np.arange(len(scores) - 1), scores[1::])  # ignore the first score
 plt.ylabel('Score')
 plt.xlabel('Episode #')
 plt.show()
-
-## 4 step prob kept restarting, timing

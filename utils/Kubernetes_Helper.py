@@ -1,5 +1,8 @@
-from kubernetes import client, config, watch
+"""
+Kubernetes Helper functions
+"""
 
+from kubernetes import client, config, watch
 import time
 import random
 import os
@@ -7,14 +10,14 @@ import numpy as np
 import yaml
 import subprocess
 
+
 config.load_kube_config()
 v1 = client.CoreV1Api()
 
 
 def tasks():
     """
-    Getting the tasks on pending waiting for Genetic scheduler
-    :return:
+    Getting the pending tasks pending waiting to be scheduled
     """
     w = watch.Watch()
     idTask = 0
@@ -28,6 +31,9 @@ def tasks():
 
 
 def nodes_available():
+    """
+    Getting available nodes
+    """
     nodes_dict = {}
     counter = 0
     for n in v1.list_node().items:
@@ -39,6 +45,10 @@ def nodes_available():
 
 
 def change_scheduler_name(name):
+    """
+    Changing pod's scheduler name
+    :param name: new scheduler name
+    """
     tasks = os.listdir('../tasks')
     for i in tasks:
         path = 'tasks/' + i
@@ -46,22 +56,20 @@ def change_scheduler_name(name):
             file = yaml.load(file, Loader=yaml.FullLoader)
 
             file['spec']['template']['spec']['schedulerName'] = name
-            # if random.random() > 0.5:
-            #     file['spec']['val'] = file['spec']['val'] + 200
-            # else:
-            #     file['spec']['val'] = file['spec']['val'] - 200
 
         with open(path, 'w') as fil:
             documents = yaml.dump(file, fil)
 
 
 def modify_replicatset():
+    """
+    Changing the replicat set
+    """
     tasks = os.listdir('../tasks')
     for i in tasks:
         path = 'tasks/' + i
         with open(path) as file:
             file = yaml.load(file, Loader=yaml.FullLoader)
-            # file['spec']['replicas'] = random.randint(1, 5)
             file['spec']['template']['spec']['val'] = random.randint(1, 4)
 
         with open(path, 'w') as fil:
@@ -69,6 +77,9 @@ def modify_replicatset():
 
 
 def delete_pods():
+    """
+    Deleting pods
+    """
     bashCommand = "kubectl delete -f tasks/."
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
@@ -77,6 +88,10 @@ def delete_pods():
 
 
 def apply_pods():
+    """
+    Applying pods
+    :return:
+    """
     bashCommand = "kubectl apply -f tasks/. --validate=false"
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
@@ -84,6 +99,11 @@ def apply_pods():
 
 
 def reset(new_epi):
+    """
+
+    :param new_epi: boolean that specifying if we are resting inside an episode
+    :return: Array containing the number of available machines and tasks to be scheduled
+    """
     delete_pods()
     change_scheduler_name('waiting')
     if new_epi:

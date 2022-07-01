@@ -3,17 +3,14 @@ from ReplayMemory import *
 import torch
 import torch.optim as optim
 
-BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 2  # minibatch size
-GAMMA = 0.90  # discount factor
-TAU = 1e-3  # for soft update of target parameters
-LR = 0.01  # learning rate
-UPDATE_EVERY = 4  # how often to update the network
+BUFFER_SIZE = int(1e5)
+BATCH_SIZE = 2
+GAMMA = 0.90
+TAU = 1e-3
+LR = 0.01
+UPDATE_EVERY = 4
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-## next states is the resulat of that specfuc actuon
 
 class Agent:
     def __init__(self, state_size, action_size, seed):
@@ -69,17 +66,3 @@ class Agent:
             return np.argmax(action_value.cpu().data.numpy())
         else:  # random policy
             return random.choice(np.arange(self.action_size))
-
-        # state = torch.from_numpy(state).float().unsqueeze(0).to(device)
-        # self.qnetwork_local.eval()
-        # with torch.no_grad():
-        #     actions = self.qnetwork_local(state)
-        # self.qnetwork_local.train()
-        # print(actions)
-        # if random.random() < eps:
-        #     print(random.choice(np.arange(self.action_size)), 'random')
-        #     return random.choice(np.arange(self.action_size))
-        # else:
-        #     print(np.argmax(actions.cpu().data.numpy()))
-        #     return np.argmax(actions.cpu().data.numpy())
-

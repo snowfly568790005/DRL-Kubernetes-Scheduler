@@ -5,23 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d2bea8db-8c93-4d4e-9830-563e3d67dfbd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/KubernetesPython.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KubernetesPython.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/Agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Genetic.py" beforeDir="false" afterPath="$PROJECT_DIR$/algos/Genetic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GeneticSched.py" beforeDir="false" afterPath="$PROJECT_DIR$/algos/GeneticSched.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KubeResources.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/KubeResources.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kubernetes_Helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/Kubernetes_Helper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ReplayMemory.py" beforeDir="false" afterPath="$PROJECT_DIR$/ReplayMemory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpt_Gen_Default.pth" beforeDir="false" afterPath="$PROJECT_DIR$/models/checkpt_Gen_Default.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/envi.py" beforeDir="false" afterPath="$PROJECT_DIR$/envi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/calcul300.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/calcul400.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/calcul500.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tasks/calcul600.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/KubeResources.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/KubeResources.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/Kubernetes_Helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/Kubernetes_Helper.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,7 +196,7 @@
       <workItem from="1655903387958" duration="1544000" />
       <workItem from="1656676064048" duration="1154000" />
       <workItem from="1656677257835" duration="4808000" />
-      <workItem from="1656682103811" duration="5059000" />
+      <workItem from="1656682103811" duration="6406000" />
     </task>
     <servers />
   </component>
