@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: calcul14
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: calcul14
+  template:
+    metadata:
+      labels:
+        app: calcul14
+    spec:
+      containers:
+      - image: moenes/calcul14:latest
+        name: calcul14
+      schedulerName: default-scheduler
+      val: 1

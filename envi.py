@@ -1,31 +1,21 @@
 import gym
-from Kubernetes_Helper import *
-from KubeResources import *
-from GeneticSched import *
+from utils.Kubernetes_Helper import *
+from algos.GeneticSched import *
 
 
-## letss start with the tasks cpus's as the state
-## selection will be basd on
-
-class CloudEnv(gym.Env):
+class CloudEnv:
     def __init__(self):
         """
         Action space : discrete : Genetic, Kube default scheduler
         Observation space / same state space : we can maybe start with the nb of tasks and their cpu usage and the
-        available nodes and maybeee later we can alter the nodes resources
+        available nodes and maybe later we can alter the nodes resources
 
         """
         super(CloudEnv, self).__init__()
-        # self.nodes = nodes_available()
-        self.currentsteps = 0
-        self.lastmetrics = None
-        self.algos = {0: 'genetic', 1: 'default-scheduler'}
-
-    def getmetrics(self):
-        if self.currentsteps == 0:
-            return None
-        else:
-            return metric()
+        self.episode_steps = 0
+        self.last_metrics = None
+        self.same_results = 0
+        self.algos = {0: 'genetic', 1: 'scheduler-round-robin'}
 
     def step(self, action):
         """
@@ -36,56 +26,66 @@ class CloudEnv(gym.Env):
         :return:
         """
         reconfigure(self.algos[action])
-        time.sleep(40)
+        time.sleep(5)
         if self.algos[action] == 'genetic':
             schedule()
-        next_state, metrics = resources()
+        metrics = resources()
         reward = self.reward(metrics)
         done = self.termination()
-        self.currentsteps = self.currentsteps + 1
-        return action, next_state, reward, done
+        next_state = get_nextstate()
+        self.episode_steps = self.episode_steps + 1
+        # return next_state, metrics   for testing
+        return action, next_state, reward, done  # for training
 
-    def reset(self):
-        """
-        MAYBE WE DO NOT NEED THIIS
-        reset the tasks, Deleting all the envi, looking again for availble nodes,
-        :return:
-        """
-        ## reseting tasks with random CPU between the values and the scheduler name as waiting
-        return reset()
+    def reset(self, new_epi):
+        self.episode_steps = 0
+        return reset(new_epi)
 
     def termination(self):
         """
-        check maybe the number of steps of our agent if we attented that time step we stop
+        check maybe the number of steps of our agent if we attended that time step we stop
         :return:
         """
-        ## we change this to kube checks if all tasks are done in case of evicted tasks
-        return True
+        # what we could do this get the number of
+        if self.same_results == 2:
+            self.episode_steps = 0
+            return True
+        return False
 
-    def reward(self,metrics):
+    def reward(self, metrics):
         """
-        what is our reward function.. this a prob for now
-        maybe try one time get the actual mesruements of that cpu of the node
+        what is our reward function. this a prob for now
+        maybe try one time get the actual measurements of that cpu of the node
         and on the next
-        LATTEEEEER check the condiciton of nodes if one pod got effectied he gets --
+        Later check the condition of nodes if one pod got effected he gets --
         :return:
         """
-        if self.currentsteps == 0:  # cant compare til we have two time steps
+        if self.episode_steps == 0:  # can't compare til we have two time steps
             reward = 1
-            self.lastmetrics = metrics
+            self.same_results = 0
+            self.last_metrics = metrics
         else:
-            print('self.lastmetrics[0]', self.lastmetrics[0])
-            print('self.lastmetrics[1]', self.lastmetrics[1])
-            exec_time, imbalence_deg = metrics[0], metrics[1]
-            if imbalence_deg < self.lastmetrics[1]:
-                if exec_time < self.lastmetrics[0]:
-                    reward = 5
-                else:
-                    reward = 3
+            # #exec_time, imbalance_deg = metrics[0], metrics[1]
+            # if imbalance_deg <= self.last_metrics[1]:
+            #     if exec_time <= self.last_metrics[0]:
+            #         reward = 5
+            #         self.same_results = 0
+            #     else:
+            #         reward = 3
+            #         self.same_results += 1
+            # else:
+            #     if exec_time <= self.last_metrics[0]:
+            #         reward = 3
+            #         self.same_results += 1
+            #     else:
+            #         reward = -2  # worst case scenario
+            #         self.same_results = 0
+            # self.last_metrics = metrics
+            if metrics <= self.last_metrics:
+                reward = 3
+                self.same_results += 1
             else:
-                if exec_time < self.lastmetrics[0]:
-                    reward = 3
-                else:
-                    reward = -1
-            self.lastmetrics = metrics
+                reward = -1
+                self.same_results = 0
+            self.last_metrics = metrics
         return reward

@@ -1,25 +1,13 @@
-
-import ast
-
-
+from utils.KubeResources import *
 from Genetic import *
-from kubernetes import client, config, watch
+from kubernetes import client, config
+
+from utils.Kubernetes_Helper import nodes_available, tasks
 
 config.load_kube_config()  ## hedhi tekhdm ki nlansi mn hnee
 v1 = client.CoreV1Api()
 
 scheduler_name = "genetic"
-
-
-def nodes_available():
-    nodes_dict = {}
-    counter = 0
-    for n in v1.list_node().items:
-        for status in n.status.conditions:
-            if status.status == "True" and status.type == "Ready":
-                nodes_dict[counter] = [n.metadata.name, int(n.status.allocatable['cpu'])]
-                counter = counter + 1
-    return nodes_dict
 
 
 def scheduler(name, node, namespace="default"):
@@ -69,27 +57,14 @@ def match(i, sched, nodes_dict):
     return nodes_dict[sched[i]]
 
 
-def tasks():
-    """
-    Getting the tasks on pending waiting for Genetic scheduler
-    :return:
-    """
-    w = watch.Watch()
-    idTask = 0
-    taskdict = {}
-    for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
-        if event['object'].status.phase == "Pending" and event['object'].status.conditions is None and \
-                event['object'].spec.scheduler_name == scheduler_name:
-            taskdict[idTask] = [event['object'].metadata.name, ast.literal_eval(
-                event['object'].metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'])['spec'][
-                'val']]
-            idTask += 1
-    return taskdict
-
-
 def schedule():
     taskdict = tasks()
     nodes_dict = nodes_available()
     schduled = genetic(nodes_dict, taskdict)
     for i in taskdict:
         scheduler(taskdict[i][0], match(i, schduled, nodes_dict)[0])
+
+# def main():
+#     schedule()
+#     _, met = resources()
+#     return met

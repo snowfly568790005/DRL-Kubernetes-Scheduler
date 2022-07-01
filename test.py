@@ -1,9 +1,12 @@
-import datetime
 import time
 import random
 
 import yaml
 import subprocess
+
+from kubernetes.watch import watch
+
+from utils.KubeResources import v1
 
 
 def change_sched(name):
@@ -35,13 +38,24 @@ def update(name):
     apply_changes()
 
 
-def test():
-    print(random.random())
+def wait(state): ## could be terminating
+    w = watch.Watch()
+    for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
+        pass
+        ## break until its clear
+        print(event)
 
-# Terminating
 
-dic = {'calcul300': datetime.timedelta(seconds=300), 'calcul400': datetime.timedelta(seconds=400), 'calcul500': datetime.timedelta(seconds=500), 'calcul600': datetime.timedelta(seconds=600)}
-S = 0
-for i in dic:
-    S = S + (dic[i].total_seconds())
-print(S / len(dic))
+def modify_replicatset():
+    for i in tasks:
+        path = 'tasks/' + i
+        with open(path) as file:
+            file = yaml.load(file, Loader=yaml.FullLoader)
+            file['spec']['replicas'] = random.randint(1,5)
+            file['spec']['template']['spec']['val'] = random.randint(1,4)
+
+
+        with open(path, 'w') as fil:
+            documents = yaml.dump(file, fil)
+
+random.randint(1,)

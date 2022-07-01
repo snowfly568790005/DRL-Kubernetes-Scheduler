@@ -1,4 +1,0 @@
-kubernetes==23.3.0
-matplotlib==3.5.1
-namespace==0.1.4
-pandas==1.4.2

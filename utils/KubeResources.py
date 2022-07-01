@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-from datetime import time
+import time
+import time as t
 
 from kubernetes.client import CustomObjectsApi
-
 from kubernetes import client, config, watch
+from utils.Kubernetes_Helper import avg, avg_time, pods_nb
 
 config.load_kube_config()  ## From control panel
 
@@ -21,7 +22,7 @@ def used_resources():
     # mempod = {}
     cpunode = {}
     memnode = {}
-    for t in range(3):
+    for _ in range(3):
         for i in nodes['items']:
             if i['metadata']['name'] not in cpunode:
                 cpunode[i['metadata']['name']] = [int(i['usage']['cpu'][:len(i['usage']['cpu']) - 1])]
@@ -29,6 +30,7 @@ def used_resources():
             else:
                 cpunode[i['metadata']['name']].append(int(i['usage']['cpu'][:len(i['usage']['cpu']) - 1]))
                 memnode[i['metadata']['name']].append(int(i['usage']['memory'][:len(i['usage']['memory']) - 2]))
+        time.sleep(10)
 
         # for i in pods['items']:
         #     if i['metadata']['name'] not in cpupods:
@@ -44,16 +46,7 @@ def used_resources():
 
         # time.sleep(35)  # To get different mesures after 10s  window
 
-    return final(cpunode), final(memnode)  # , final(cpupods), final(mempod)
-
-
-def getpodsnb():
-    w = watch.Watch()
-    S = 0
-    for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
-        if event['object'].status.phase == "Running":
-            S = S + 1
-    return S
+    return avg(cpunode), avg(memnode)  # , final(cpupods), final(mempod)
 
 
 def exec_time():
@@ -61,33 +54,31 @@ def exec_time():
     Finding the execution time of each pod once it has finished
     :return:
     """
-    nb = getpodsnb()
+    t.sleep(15)
+    nb = pods_nb("Running")
     w = watch.Watch()
     info = {}
     while nb != len(info):
         for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
-            if (event['object'].status.container_statuses is not None and (
-                    event['object'].status.container_statuses[0].restart_count != 0)
-                    and (event['object'].metadata.name not in info)):
-                info[event['object'].metadata.name] = {
-                    'Scheduler': event['object'].spec.scheduler_name,
-                    'started_at': event['object'].status.container_statuses[0].last_state.terminated.started_at,
-                    'finished_at': event['object'].status.container_statuses[0].last_state.terminated.finished_at
-                }
-        # time.sleep(10)
+            if 'round' not in event['object'].metadata.name:
+                if (event['object'].status.container_statuses is not None and (
+                        event['object'].status.container_statuses[0].restart_count != 0)
+                        and (event['object'].metadata.name not in info)
+                        and 'round' not in event['object'].metadata.name):
+                    # event['object'].status.container_statuses[0].last_state.terminated is not None):
+                    info[event['object'].metadata.name] = {
+                        'Scheduler': event['object'].spec.scheduler_name,
+                        'started_at': event['object'].status.container_statuses[0].last_state.terminated.started_at,
+                        'finished_at': event['object'].status.container_statuses[0].last_state.terminated.finished_at
+                    }
+        t.sleep(10)
     for i in info:
         info[i] = info[i]['finished_at'] - info[i]['started_at']
     return info
 
 
-def final(dic):
-    for i in dic:
-        dic[i] = sum(dic[i]) / len(dic[i])
-    return dic
-
-
-def printresults():
-    print('current running pods ', getpodsnb())
+def results():
+    print('current running pods ', pods_nb())
     cpunode, memnode = used_resources()
     print('CPU and Memory used in NODES')
     print(cpunode)
@@ -99,18 +90,14 @@ def printresults():
 def resources():
     cpunode, memnode = used_resources()
     exectime = avg_time(exec_time())
-    imbal_deg = metric(cpunode, memnode)
-    return [cpunode, memnode], [exectime,imbal_deg]
+    imbal_deg = imbalance_degree(cpunode, memnode)
+    return [exectime, imbal_deg]
+    # return imbal_deg
 
-def avg_time(dic):
-    S = 0
-    for i in dic:
-        S = S + (dic[i].total_seconds())
-    return S
 
-def metric(cpunode, memnode):
+def imbalance_degree(cpunode, memnode):
     S = 0
-    for i in cpunode:
+    for i in range(len(cpunode)):
         Avg = (cpunode[i] + memnode[i]) / 2
         S = ((Avg - cpunode[i]) ** 2) / 2 + ((Avg - memnode[i]) ** 2) / 2
-    return S/len(cpunode)
+    return S / len(cpunode)

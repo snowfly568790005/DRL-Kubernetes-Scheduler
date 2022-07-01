@@ -23,14 +23,13 @@ class ReplayBuffer:
         self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
         self.experience = namedtuple("Experience", field_names=["states", "actions", "rewards", "next_states", "dones"])
-        self.df = pd.DataFrame()
         random.seed(seed)
 
     def add(self, state, action, reward, next_states, done):
         """Add a new experience to memory."""
         e = self.experience(state, action, reward, next_states, done)
         self.memory.append(e)
-        self.add_tocsv(state, action, reward, next_states, done)
+        self.add_txt(state, action, reward, next_states, done)
 
     def sample(self):
         """Randomly sample a batch of experiences from memory."""
@@ -38,27 +37,21 @@ class ReplayBuffer:
 
         states = torch.from_numpy(np.vstack([e.states for e in experiences if e is not None])).float().to(device)
         actions = torch.from_numpy(np.vstack([e.actions for e in experiences if e is not None])).long().to(device)
-        next_states = torch.from_numpy(np.vstack([e.next_states for e in experiences if e is not None])).float().to(device)
+        next_states = torch.from_numpy(np.vstack([e.next_states for e in experiences if e is not None])).float().to(
+            device)
         rewards = torch.from_numpy(np.vstack([e.rewards for e in experiences if e is not None])).float().to(device)
-        dones = torch.from_numpy(np.vstack([e.dones for e in experiences if e is not None]).astype(np.uint8)).float().to(
+        dones = torch.from_numpy(
+            np.vstack([e.dones for e in experiences if e is not None]).astype(np.uint8)).float().to(
             device)
 
-        return tuple(states, actions, rewards,next_states, dones)
+        return (states, actions, rewards, next_states, dones)
 
     def __len__(self):
         """Return the current size of internal memory."""
         return len(self.memory)
 
-    def add_tocsv(self,state, action, reward, next_states, done):
-        dic = {
-            'state' : state,
-            'action' : action,
-            'reward' : reward,
-            'next_state' : next_states,
-            'done' : done
-        }
-        new_df = pd.DataFrame(dic)
-        new_df = new_df.append(self.df)
-        new_df.to_csv('data.csv')
-        self.df = new_df
-
+    def add_txt(self, state, action, reward, next_states, done):
+        with open("data/results", 'a') as file:
+            text = f"{state} {action} {reward} {next_states[0]} {next_states[1]} {done} \n"
+            file.write(text)
+            file.close()
