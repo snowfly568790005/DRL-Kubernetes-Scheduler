@@ -1,6 +1,7 @@
 """
 Kubernetes Helper functions
 """
+import datetime
 
 from kubernetes import client, config, watch
 import time
@@ -9,7 +10,6 @@ import os
 import numpy as np
 import yaml
 import subprocess
-
 
 config.load_kube_config()
 v1 = client.CoreV1Api()
@@ -49,9 +49,9 @@ def change_scheduler_name(name):
     Changing pod's scheduler name
     :param name: new scheduler name
     """
-    tasks = os.listdir('../tasks')
+    tasks = os.listdir('/home/moenes/Desktop/KubernetesPython/tasks')
     for i in tasks:
-        path = 'tasks/' + i
+        path = '/home/moenes/Desktop/KubernetesPython/tasks/' + i
         with open(path) as file:
             file = yaml.load(file, Loader=yaml.FullLoader)
 
@@ -65,25 +65,25 @@ def modify_replicatset():
     """
     Changing the replicat set
     """
-    tasks = os.listdir('../tasks')
+    tasks = os.listdir('/home/moenes/Desktop/KubernetesPython/tasks')
     for i in tasks:
-        path = 'tasks/' + i
+        path = '/home/moenes/Desktop/KubernetesPython/tasks/' + i
         with open(path) as file:
             file = yaml.load(file, Loader=yaml.FullLoader)
-            file['spec']['template']['spec']['val'] = random.randint(1, 4)
+            file['spec']['replicas'] = random.randint(1, 4)
 
         with open(path, 'w') as fil:
             documents = yaml.dump(file, fil)
 
 
-def delete_pods():
+def delete_pods(status):
     """
     Deleting pods
     """
-    bashCommand = "kubectl delete -f tasks/."
+    bashCommand = "kubectl delete -f /home/moenes/Desktop/KubernetesPython/tasks/."
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
-    while pods_nb("Running") != 0:
+    while pods_nb(status) != 0:
         time.sleep(2)
 
 
@@ -92,7 +92,7 @@ def apply_pods():
     Applying pods
     :return:
     """
-    bashCommand = "kubectl apply -f tasks/. --validate=false"
+    bashCommand = "kubectl apply -f /home/moenes/Desktop/KubernetesPython/tasks/. --validate=false"
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     result = process.communicate()
     time.sleep(2)
@@ -104,7 +104,7 @@ def reset(new_epi):
     :param new_epi: boolean that specifying if we are resting inside an episode
     :return: Array containing the number of available machines and tasks to be scheduled
     """
-    delete_pods()
+    delete_pods("Running")  # delete running pods
     change_scheduler_name('waiting')
     if new_epi:
         modify_replicatset()
@@ -114,7 +114,7 @@ def reset(new_epi):
 
 
 def apply_changes():
-    delete_pods()
+    delete_pods("Pending")# we delete the pending nodes3.
     apply_pods()
 
 
@@ -134,16 +134,16 @@ def pods_nb(status):
     w = watch.Watch()
     S = 0
     for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
-        if event['object'].status.phase == status and 'round' not in event['object'].metadata.name:
+        if event['object'].status.phase == status and 'scheduler-round-robin' not in event['object'].metadata.name:
             S = S + 1
     return S
 
 
 def getreplicatval():
-    taskslist = os.listdir('../tasks')
+    taskslist = os.listdir('/home/moenes/Desktop/KubernetesPython/tasks')
     values = {}
     for i in taskslist:
-        path = 'tasks/' + i
+        path = '/home/moenes/Desktop/KubernetesPython/tasks/' + i
         with open(path) as file:
             file = yaml.load(file, Loader=yaml.FullLoader)
             values[file['metadata']['name']] = file['spec']['template']['spec']['val']
@@ -168,4 +168,4 @@ def avg_time(dic):
     S = 0
     for i in dic:
         S = S + (dic[i].total_seconds())
-    return S
+    return S / len(dic)

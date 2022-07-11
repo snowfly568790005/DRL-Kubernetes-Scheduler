@@ -10,7 +10,6 @@ TAU = 1e-3
 LR = 0.01
 UPDATE_EVERY = 4
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class Agent:
     def __init__(self, state_size, action_size, seed):

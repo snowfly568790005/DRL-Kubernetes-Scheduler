@@ -1,5 +1,7 @@
+import time
+from os.path import exists
 import gym
-from utils.Kubernetes_Helper import *
+from utils.KubeResources import *
 from algos.GeneticSched import *
 
 
@@ -15,7 +17,7 @@ class CloudEnv:
         self.episode_steps = 0
         self.last_metrics = None
         self.same_results = 0
-        self.algos = {0: 'genetic', 1: 'scheduler-round-robin'}
+        self.actions = {0: 'genetic', 1: 'scheduler-round-robin'}
 
     def step(self, action):
         """
@@ -25,21 +27,24 @@ class CloudEnv:
         :param action:
         :return:
         """
-        reconfigure(self.algos[action])
+        reconfigure(self.actions[action])
         time.sleep(5)
-        if self.algos[action] == 'genetic':
+        if self.actions[action] == 'genetic':
             schedule()
-        metrics = resources()
+        time.sleep(5)
+        metrics = resources()  # [1] for training and without for testing
         reward = self.reward(metrics)
         done = self.termination()
         next_state = get_nextstate()
         self.episode_steps = self.episode_steps + 1
-        # return next_state, metrics   for testing
+        # return metrics  # for testing
         return action, next_state, reward, done  # for training
 
     def reset(self, new_epi):
-        self.episode_steps = 0
-        return reset(new_epi)
+        if new_epi:
+            self.last_metrics = None
+        state = reset(new_epi)
+        return state
 
     def termination(self):
         """
@@ -60,32 +65,40 @@ class CloudEnv:
         Later check the condition of nodes if one pod got effected he gets --
         :return:
         """
-        if self.episode_steps == 0:  # can't compare til we have two time steps
-            reward = 1
+        if self.last_metrics is None:
             self.same_results = 0
-            self.last_metrics = metrics
         else:
-            # #exec_time, imbalance_deg = metrics[0], metrics[1]
-            # if imbalance_deg <= self.last_metrics[1]:
-            #     if exec_time <= self.last_metrics[0]:
-            #         reward = 5
-            #         self.same_results = 0
-            #     else:
-            #         reward = 3
-            #         self.same_results += 1
-            # else:
-            #     if exec_time <= self.last_metrics[0]:
-            #         reward = 3
-            #         self.same_results += 1
-            #     else:
-            #         reward = -2  # worst case scenario
-            #         self.same_results = 0
-            # self.last_metrics = metrics
-            if metrics <= self.last_metrics:
-                reward = 3
-                self.same_results += 1
-            else:
-                reward = -1
-                self.same_results = 0
-            self.last_metrics = metrics
-        return reward
+            if metrics[0] <= self.last_metrics[0] or metrics[1] <= self.last_metrics[1]:
+                self.same_results = self.same_results + 1
+        self.last_metrics = metrics
+        return 1 / (metrics[0] + metrics[-1])  ## sum of all used resources
+
+        # if self.episode_steps == 0:  # can't compare til we have two time steps
+        #   reward = 1
+        #   self.same_results = 0
+        #   self.last_metrics = metrics
+        # else:
+        # #exec_time, imbalance_deg = metrics[0], metrics[1]
+        # if imbalance_deg <= self.last_metrics[1]:
+        #     if exec_time <= self.last_metrics[0]:
+        #         reward = 5
+        #         self.same_results = 0
+        #     else:
+        #         reward = 3
+        #         self.same_results += 1
+        # else:
+        #     if exec_time <= self.last_metrics[0]:
+        #         reward = 3
+        #         self.same_results += 1
+        #     else:
+        #         reward = -2  # worst case scenario
+        #         self.same_results = 0
+        # self.last_metrics = metrics
+        # if metrics <= self.last_metrics:
+        #   reward = 3
+        #   self.same_results += 1
+        # else:
+        # {    reward = -1
+        #     self.same_results = 0
+        # self.last_metrics = metrics
+        # return reward

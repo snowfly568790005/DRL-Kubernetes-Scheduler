@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-import time
 import time as t
 
 from kubernetes.client import CustomObjectsApi
-from kubernetes import client, config, watch
-from utils.Kubernetes_Helper import avg, avg_time, pods_nb
+from utils.Kubernetes_Helper import *
 
 config.load_kube_config()  # From control panel
 
@@ -18,14 +16,15 @@ def used_resources():
     :return: avg(cpu_node) : Average CPU utilisation in the cluster
              avg(mem_node) : Average Memory in the cluster
     """
-    cust = CustomObjectsApi()
-    nodes = cust.list_cluster_custom_object('metrics.k8s.io', 'v1beta1', 'nodes')
+
     # pods = cust.list_cluster_custom_object('metrics.k8s.io', 'v1beta1', 'namespaces/default/pods')
     # cpu_pods = {}
     # mem_pod = {}
     cpu_node = {}
     mem_node = {}
     for _ in range(3):
+        cust = CustomObjectsApi()
+        nodes = cust.list_cluster_custom_object('metrics.k8s.io', 'v1beta1', 'nodes')
         for i in nodes['items']:
             if i['metadata']['name'] not in cpu_node:
                 cpu_node[i['metadata']['name']] = [int(i['usage']['cpu'][:len(i['usage']['cpu']) - 1])]
@@ -57,26 +56,28 @@ def exec_time():
     Getting the execution time of each pod once finished
     :return: info : Dictionary containing the pod name, and it's execution time
     """
-    t.sleep(15)
-    nb = pods_nb("Running")
     w = watch.Watch()
     info = {}
-    while nb != len(info):
+    while True:
         for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
             if 'round' not in event['object'].metadata.name:
                 if (event['object'].status.container_statuses is not None and (
                         event['object'].status.container_statuses[0].restart_count != 0)
                         and (event['object'].metadata.name not in info)
-                        and 'round' not in event['object'].metadata.name):
-                    # event['object'].status.container_statuses[0].last_state.terminated is not None:
-                    info[event['object'].metadata.name] = {
-                        'Scheduler': event['object'].spec.scheduler_name,
-                        'started_at': event['object'].status.container_statuses[0].last_state.terminated.started_at,
-                        'finished_at': event['object'].status.container_statuses[0].last_state.terminated.finished_at
-                    }
+                        and ('round' not in event['object'].metadata.name)):
+                    if event['object'].status.container_statuses[0].last_state.terminated is not None:
+                        time_used = (event['object'].status.container_statuses[0].last_state.terminated.finished_at -
+                                     event['object'].status.container_statuses[0].last_state.terminated.started_at)
+                        info[event['object'].metadata.name] = time_used
+                    else:
+                        continue
+        stop = True
+        for event in w.stream(v1.list_namespaced_pod, "default", timeout_seconds=1):
+            if event['object'].status.container_statuses[0].last_state.terminated is None:
+                stop = False
+        if stop:
+            break
         t.sleep(10)
-    for i in info:
-        info[i] = info[i]['finished_at'] - info[i]['started_at']
     return info
 
 

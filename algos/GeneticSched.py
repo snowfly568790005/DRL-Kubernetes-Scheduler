@@ -1,7 +1,5 @@
-from utils.KubeResources import *
-from Genetic import *
+from algos.Genetic import *
 from kubernetes import client, config
-
 from utils.Kubernetes_Helper import nodes_available, tasks
 
 config.load_kube_config()  ## hedhi tekhdm ki nlansi mn hnee
