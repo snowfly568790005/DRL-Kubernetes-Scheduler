@@ -5,20 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d2bea8db-8c93-4d4e-9830-563e3d67dfbd" name="Changes" comment="updates">
-      <change beforePath="$PROJECT_DIR$/.idea/KubernetesPython.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KubernetesPython.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/Agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/algos/GeneticSched.py" beforeDir="false" afterPath="$PROJECT_DIR$/algos/GeneticSched.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PPO/models/PPO_discrete_CloudEnv.pth" beforeDir="false" afterPath="$PROJECT_DIR$/PPO/models/PPO_discrete_CloudEnv.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PPO/results.csv" beforeDir="false" afterPath="$PROJECT_DIR$/PPO/results.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PPO/tests.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/envi.py" beforeDir="false" afterPath="$PROJECT_DIR$/envi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maintest.py" beforeDir="false" afterPath="$PROJECT_DIR$/maintest.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/calcul11.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/calcul11.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/calcul12.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/calcul12.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/calcul13.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/calcul13.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tasks/calcul14.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tasks/calcul14.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testagent.py" beforeDir="false" afterPath="$PROJECT_DIR$/testagent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/KubeResources.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/KubeResources.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/Kubernetes_Helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/Kubernetes_Helper.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,21 +56,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/moenes/Desktop/KubernetesPython&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.notebooks.jupyter.connections.configuration.JupyterServerConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "full.screen.before.presentation.mode": "false",
+    "last_opened_file_path": "/home/moenes/Desktop/KubernetesPython",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.notebooks.jupyter.connections.configuration.JupyterServerConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -82,7 +81,7 @@
       <recent name="$PROJECT_DIR$/models" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.testagent">
     <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="KubernetesPython" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -127,6 +126,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="envi" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="KubernetesPython" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/envi.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="KubernetesPython" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -149,42 +170,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="params" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Jupyter" />
+    <configuration name="maintest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="KubernetesPython" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/PycharmProjects/Jupyter" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/PycharmProjects/Jupyter/params.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Jupyter" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/PycharmProjects/Jupyter" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/PycharmProjects/Jupyter/test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/maintest.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -215,7 +214,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="train_PPO" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="testagent" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="KubernetesPython" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -223,12 +222,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PPO" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PPO/train_PPO.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testagent.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -239,19 +238,19 @@
     </configuration>
     <list>
       <item itemvalue="Python.Unnamed" />
+      <item itemvalue="Python.envi" />
+      <item itemvalue="Python.maintest" />
+      <item itemvalue="Python.testagent" />
       <item itemvalue="Python.test_PPO" />
-      <item itemvalue="Python.train_PPO" />
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.params" />
-      <item itemvalue="Python.test" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
-        <item itemvalue="Python.train_PPO" />
+        <item itemvalue="Python.testagent" />
+        <item itemvalue="Python.maintest" />
+        <item itemvalue="Python.envi" />
         <item itemvalue="Python.test_PPO" />
-        <item itemvalue="Python.params" />
-        <item itemvalue="Python.test" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -272,7 +271,8 @@
       <workItem from="1656922697719" duration="14744000" />
       <workItem from="1657008085602" duration="29558000" />
       <workItem from="1657105066336" duration="11468000" />
-      <workItem from="1657538484684" duration="12898000" />
+      <workItem from="1657538484684" duration="15024000" />
+      <workItem from="1657614560484" duration="43612000" />
     </task>
     <task id="LOCAL-00001" summary="updates">
       <created>1656692988748</created>
@@ -314,6 +314,17 @@
     <MESSAGE value="updates" />
     <option name="LAST_COMMIT_MESSAGE" value="updates" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/testagent.py</url>
+          <line>3</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/KubernetesPython$plots.coverage" NAME="plots Coverage Results" MODIFIED="1657013798373" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Jupyter" />
     <SUITE FILE_PATH="coverage/KubernetesPython$params.coverage" NAME="params Coverage Results" MODIFIED="1657026939588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Jupyter" />
@@ -321,10 +332,11 @@
     <SUITE FILE_PATH="coverage/KubernetesPython$test.coverage" NAME="test Coverage Results" MODIFIED="1657025455095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Jupyter" />
     <SUITE FILE_PATH="coverage/KubernetesPython$Kubernetes_Helper.coverage" NAME="Kubernetes_Helper Coverage Results" MODIFIED="1656930824000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/KubernetesPython$train.coverage" NAME="train Coverage Results" MODIFIED="1657017436970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/PycharmProjects/Jupyter" />
-    <SUITE FILE_PATH="coverage/KubernetesPython$test_PPO.coverage" NAME="test_PPO Coverage Results" MODIFIED="1657548092570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PPO" />
-    <SUITE FILE_PATH="coverage/KubernetesPython$main.coverage" NAME="main Coverage Results" MODIFIED="1657552582403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/KubernetesPython$train_PPO.coverage" NAME="train_PPO Coverage Results" MODIFIED="1657552578014" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PPO" />
-    <SUITE FILE_PATH="coverage/KubernetesPython$testagent.coverage" NAME="testagent Coverage Results" MODIFIED="1656932839623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/KubernetesPython$envi.coverage" NAME="envi Coverage Results" MODIFIED="1656924733631" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/KubernetesPython$test_PPO.coverage" NAME="test_PPO Coverage Results" MODIFIED="1657716395118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PPO" />
+    <SUITE FILE_PATH="coverage/KubernetesPython$main.coverage" NAME="main Coverage Results" MODIFIED="1657617639454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/KubernetesPython$train_PPO.coverage" NAME="train_PPO Coverage Results" MODIFIED="1657614599003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PPO" />
+    <SUITE FILE_PATH="coverage/KubernetesPython$testagent.coverage" NAME="testagent Coverage Results" MODIFIED="1659687066465" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/KubernetesPython$maintest.coverage" NAME="maintest Coverage Results" MODIFIED="1659464500385" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/KubernetesPython$envi.coverage" NAME="envi Coverage Results" MODIFIED="1658346435444" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

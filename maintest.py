@@ -7,7 +7,7 @@ from keras.optimizers import Adam
 from envi import *
 import matplotlib.pyplot as plt
 
-EPISODES = 200
+EPISODES = 500
 
 
 class DQNAgent:
@@ -30,6 +30,7 @@ class DQNAgent:
         model.add(Dense(self.action_size, activation='linear'))
         model.compile(loss='mse',
                       optimizer=Adam(learning_rate=self.learning_rate))
+        # ADD VERBOZE =0
         return model
 
     def memorize(self, state, action, reward, next_state, done):
@@ -63,46 +64,57 @@ class DQNAgent:
 
 def train():
     env = CloudEnv()
-    # state = env.reset()
+    state = env.reset(False)
     algos = {0: 'genetic', 1: 'scheduler-round-robin'}
     state_size = 2
     action_size = len(algos)
     agent = DQNAgent(state_size, action_size)
-    # agent.load("./save/cartpole-dqn.h5")
+    agent.load("newagent-dqn.h5")
     done = False
     batch_size = 10
     scores = []
     for e in range(EPISODES):
-        state = env.reset(False)
+        state = env.reset(True)
         state = np.reshape(state, [1, state_size])
+        print(f'Starting episode {e} with state {state}')
         score = 0
+        reconfigure('default-scheduler')
+        metrics = resources()
         for time in range(10):
-            env.reset(True)
+            env.reset(False)
             action = agent.act(state)
-            _, next_state, reward, done = env.step(action)
+            _, next_state, reward, done = env.step(action, metrics)
             next_state = np.reshape(next_state, [1, state_size])
             agent.memorize(state, action, reward, next_state, done)
             score = score + reward
+            data = {
+                'action': env.actions[action],
+                'reward': reward,
+                'state': state,
+                'done': done
+            }
+            df = pd.DataFrame([data])
+            if exists('results.csv'):
+                df.to_csv('results.csv', mode='a', index=False, header=False)
+            else:
+                df.to_csv('results.csv', encoding='utf-8', index=False)
             if done:
-                print("episode: {}/{}, score: {}, e: {:.2}"
-                      .format(e, EPISODES, time, agent.epsilon))
+                print(f'episode {e} done after {time} timesteps')
                 break
             if len(agent.memory) > batch_size:
                 agent.replay(batch_size)
         scores.append(score)
         if e % 2 == 0:
-            agent.save("agent-dqn.h5")
+            agent.save("newtrainagent-dqn.h5")
     return scores
 
 
 if __name__ == "__main__":
-    agent = DQNAgent(state_size, action_size)
-    agent.load("agent-dqn.h5")
-    # scores = train()
-    # print(scores)
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111)
-    # plt.plot(np.arange(len(scores) - 1), scores[1::])  # ignore the first score
-    # plt.ylabel('Score')
-    # plt.xlabel('Episode #')
-    # plt.show()
+    scores = train()
+    print(scores)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.plot(np.arange(len(scores) - 1), scores[1::])  # ignore the first score
+    plt.ylabel('Score')
+    plt.xlabel('Episode #')
+    plt.show()

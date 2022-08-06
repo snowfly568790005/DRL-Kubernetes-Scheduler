@@ -15,5 +15,5 @@ spec:
       containers:
       - image: moenes/calcul14:latest
         name: calcul14
-      schedulerName: genetic
+      schedulerName: default-scheduler
       val: 5

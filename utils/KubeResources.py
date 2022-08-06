@@ -30,8 +30,12 @@ def used_resources():
                 cpu_node[i['metadata']['name']] = [int(i['usage']['cpu'][:len(i['usage']['cpu']) - 1])]
                 mem_node[i['metadata']['name']] = [int(i['usage']['memory'][:len(i['usage']['memory']) - 2])]
             else:
-                cpu_node[i['metadata']['name']].append(int(i['usage']['cpu'][:len(i['usage']['cpu']) - 1]))
-                mem_node[i['metadata']['name']].append(int(i['usage']['memory'][:len(i['usage']['memory']) - 2]))
+                try:
+                    cpu_node[i['metadata']['name']].append(int(i['usage']['cpu'][:len(i['usage']['cpu']) - 1]))
+                    mem_node[i['metadata']['name']].append(int(i['usage']['memory'][:len(i['usage']['memory']) - 2]))
+                except ValueError:
+                    print('bad value')
+                    print(i['usage']['cpu'][:len(i['usage']['cpu']) - 1])
         time.sleep(10)
 
         # for i in pods['items']:
@@ -90,6 +94,7 @@ def resources():
     execution_time = avg_time(exec_time())
     imbalan_deg = imbalance_degree(cpu_node, mem_node)
     return [execution_time, imbalan_deg]
+    #return imbalan_deg
 
 
 def imbalance_degree(cpu_node, mem_node):

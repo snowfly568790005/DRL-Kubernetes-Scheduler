@@ -3,7 +3,7 @@ kind: ReplicaSet
 metadata:
   name: calcul13
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: calcul13
@@ -15,5 +15,5 @@ spec:
       containers:
       - image: moenes/calcul13:latest
         name: calcul13
-      schedulerName: genetic
+      schedulerName: default-scheduler
       val: 4
